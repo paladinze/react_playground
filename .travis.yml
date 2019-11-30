@@ -3,7 +3,11 @@ services:
   - docker
 
 before_install:
-  - docker build -t paladinze/react_playground -f Dockerfile.dev .
+  - docker build -t paladinze/react_playground:test -f Dockerfile.dev .
 
 script:
-  - docker run -e CI=true paladinze/react_playground npm run test -- --coverage
+  - docker run -e CI=true paladinze/react_playground:test npm run test -- --coverage
+  - docker build -t paladinze/react_playground:latest -f Dockerfile.dev .
+
+after_script:
+  - docker images
