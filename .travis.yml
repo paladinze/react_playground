@@ -24,7 +24,7 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-  - ssh -o StrictHostKeyChecking=no ubuntu@132.232.88.184 '/home/ubuntu/react_playground/deploy.sh'
+  - ssh -o StrictHostKeyChecking=no ubuntu@132.232.88.184 'cd /home/ubuntu/react_playground && ./deploy.sh'
   on:
     branch: master
 
