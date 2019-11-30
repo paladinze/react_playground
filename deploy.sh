@@ -1,3 +1,3 @@
-docker-compose down
-docker-compose pull
-docker-compose up -d
+sudo docker-compose down
+sudo docker-compose pull
+sudo docker-compose up -d
