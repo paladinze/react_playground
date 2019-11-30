@@ -6,22 +6,23 @@ env:
   - REGISTRY_USER=paladinze
   - secure: LpEb9Q3+HFQ1v9R8cYeNJyB4y/mUczwY7TlP67ci45Nh9ALyRhtmYvGKkOTfZJBrnWhHVj0Cu2YST78gNe3Zfbqdgv++IIghrKB2H0sE2pBtjpFK2VPGNgMS7r7Tyq/1rxWsXdYA05sibBG58dJVDg1/ZdFlC7Y9FUs5M7Pd3fVfNSRQqqbLBQ9Uu7H0+jJkVeYYLb1oouFKY3gsvlIVxL68cA0OJyJVhgf/UJSAbM1HTRm7t1UAFfSQ89oU1WNCjweYMBWSJoNl/hI61v3W1XF4d9Ey+9KlmEAsQbAA2pQ4oXp7nWpxd2eviFekA2B+OrY/TEPNGqFK54LvBeQg8r822Y7wn5iHmZiDPDom6m0NhFkg0kkmYqtBSABogtyxuA8gBdvLisv94E+SucDWLa5mpZ3zieSgIv5rAaPuSA3DeJHt5sVbWadcHUVHP4AcImz1wQCpIaVqAghwGMjHdubVwZs88ceUnHhFigxLQ76WxSnu/8ccy5i5MSnbIbSqsOq2l+Daoj4vUJaAGBGjXS6A+LGuNL3IfTApiaw1SF1X9nM3jajDdKxi5v2q3cow1wRRfMyuikm7Ov+nKBXSmtl9RRPlZMePKPED4afWdRYjQJOc65I5VwWx1Cac1JCDlhD45x86bvY1k6egoaz1NcueRmceuY18IMJ/Ne4MAzc=
 
-
 before_install:
+- openssl aes-256-cbc -K $encrypted_5ce1b97e3569_key -iv $encrypted_5ce1b97e3569_iv
+  -in deploy_key.enc -out ./deploy_key -d
+- docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
 - docker build -t paladinze/react_playground:test -f Dockerfile.dev .
 - docker build -t paladinze/react_playground:latest -f Dockerfile.dev .
 
 script:
 - docker run -e CI=true paladinze/react_playground:test npm run test -- --coverage
+- docker push paladinze/react_playground:latest
 
 after_script:
 - docker images
 
-before_deploy:
-  - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-
 deploy:
   provider: script
-  script: docker push paladinze/react_playground:latest
+  script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@132.232.88.184
+    /home/ubuntu/react_playground/deploy.sh
   on:
     branch: master
