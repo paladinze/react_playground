@@ -11,17 +11,24 @@ script:
 - docker run -e CI=true paladinze/react_playground:test npm run test -- --coverage
 - docker push paladinze/react_playground:latest
 
-after_script:
-- docker images
+addons:
+  ssh_known_hosts: 132.232.88.184
+
+before_deploy:
+- openssl aes-256-cbc -K $encrypted_5ce1b97e3569_key -iv $encrypted_5ce1b97e3569_iv
+-in deploy_rsa.enc -out deploy_rsa -d
+- eval "$(ssh-agent -s)"
+- chmod 600 deploy_rsa
+- ssh-add deploy_rsa
 
 deploy:
   provider: script
   skip_cleanup: true
-  script: 
-    - chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i deploy_key ubuntu@132.232.88.184 '/home/ubuntu/react_playground/deploy.sh'
+  script:
+  - ssh -o StrictHostKeyChecking=no ubuntu@132.232.88.184 '/home/ubuntu/react_playground/deploy.sh'
   on:
     branch: master
-
+    
 env:
   global:
   - REGISTRY_USER=paladinze
