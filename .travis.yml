@@ -21,12 +21,23 @@ before_deploy:
 - ssh-add deploy_rsa
 
 deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-  - ssh -o StrictHostKeyChecking=no ubuntu@132.232.88.184 'cd /home/ubuntu/react_playground && ./deploy.sh'
-  on:
-    branch: master
+  edge: true
+  - provider: script
+    skip_cleanup: true
+    script:
+      - ssh -o StrictHostKeyChecking=no ubuntu@132.232.88.184 'cd /home/ubuntu/react_playground && ./deploy.sh'
+    on:
+      branch: master
+  - provider: elasticbeanstalk
+    region: "us-east-2"
+    app: "react_playground"
+    env: "ReactPlayground-env"
+    bucket_name: elasticbeanstalk-us-east-2-040093019950
+    path: "react_playground"
+    on:
+      branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
 
 env:
   global:
