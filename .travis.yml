@@ -1,4 +1,3 @@
-sudo: required
 services:
 - docker
 
@@ -22,7 +21,7 @@ before_deploy:
 
 deploy:
   - provider: script
-    skip_cleanup: true
+    cleanup: false
     script:
       - ssh -o StrictHostKeyChecking=no ubuntu@132.232.88.184 'cd /home/ubuntu/react_playground && ./deploy.sh'
     on:
@@ -31,7 +30,7 @@ deploy:
     region: "us-east-2"
     app: "react_playground"
     env: "ReactPlayground-env"
-    bucket_name: elasticbeanstalk-us-east-2-040093019950
+    bucket: elasticbeanstalk-us-east-2-040093019950
     path: "react_playground"
     on:
       branch: master
