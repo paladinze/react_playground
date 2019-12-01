@@ -21,7 +21,6 @@ before_deploy:
 - ssh-add deploy_rsa
 
 deploy:
-  edge: true
   - provider: script
     skip_cleanup: true
     script:
